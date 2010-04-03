@@ -1,0 +1,98 @@
+<?php
+// $id$
+
+/**
+ * @file
+ *
+ * Nitobe masthead allows you to specify a fixed image depending on the path.
+ */
+
+/**
+ * Implementation of hook_init().
+ */
+function nitobe_masthead_image_init() {
+  if (drupal_is_front_page()) {
+    $path = '<front>';
+  }
+  else {
+    $path = drupal_get_path_alias($_GET['q']);
+  }
+  $filename = db_result(db_query("SELECT image FROM {nitobe_masthead_image} WHERE path = '%s'", $path));
+
+  if ($filename) {
+    $header_img = drupal_get_path('theme', 'nitobe') .'/headers/'. $filename;
+    // Add css style
+    drupal_set_html_head(_nitobe_masthead_image_fixed_header_css($header_img) . "\n");
+
+    // Fill masthead region with something to avoid the theme override the style
+    drupal_set_content('masthead', "\n");
+  }
+}
+
+/**
+ * Returns the css style for the masthead region.
+ */
+function _nitobe_masthead_image_fixed_header_css($filename) {
+  global $base_url;
+
+  $url    = $base_url . '/' . $filename;
+  $output = '<style type="text/css">#masthead{background-image:url(%s);}</style>';
+
+  return sprintf($output, $url);
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function nitobe_masthead_image_menu() {
+  $items['admin/build/nitobemasthead'] = array(
+    'title' => 'Nitobe masthead',
+    'access arguments' => array('administer nitobe masthead'),
+    'page callback' => 'nitobe_masthead_image_admin_build_nitobemasthead',
+    'file' => 'nitobe_masthead_image.admin.inc',
+  );
+
+  $items['admin/build/nitobemasthead/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+    'access arguments' => array('administer nitobe masthead'),
+  );
+
+  $items['admin/build/nitobemasthead/add'] = array(
+    'title' => 'Add',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    'access arguments' => array('administer nitobe masthead'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nitobe_masthead_image_admin_build_nitobemasthead_add'),
+    'file' => 'nitobe_masthead_image.admin.inc',
+  );
+
+  $items['admin/build/nitobemasthead/%nitobe_masthead_image_item/edit'] = array(
+    'title' => 'Edit nitobe item',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('administer nitobe masthead'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nitobe_masthead_image_admin_build_nitobemasthead_add', 3),
+    'file' => 'nitobe_masthead_image.admin.inc',
+  );
+
+  $items['admin/build/nitobemasthead/%nitobe_masthead_image_item/delete'] = array(
+    'title' => 'Delete nitobe item',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('administer nitobe masthead'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nitobe_masthead_image_admin_build_nitobemasthead_delete', 3),
+    'file' => 'nitobe_masthead_image.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Menu item loader for %nitobe_masthead_image_item
+ */
+function nitobe_masthead_image_item_load($id) {
+  return db_fetch_object(db_query("SELECT * FROM {nitobe_masthead_image} WHERE id = %d", $id));
+}

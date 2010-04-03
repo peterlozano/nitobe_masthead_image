@@ -1,0 +1,60 @@
+<?php
+// $id$
+
+/**
+ * @file
+ * Install hooks for the nitobe masthead module.
+ *
+ * The module table will store the list of path/image relations.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function nitobe_masthead_image_install() {
+  drupal_install_schema('nitobe_masthead_image');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function nitobe_masthead_image_uninstall() {
+  drupal_uninstall_schema('nitobe_masthead_image');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function nitobe_masthead_image_schema() {
+  $schema = array();
+
+  $schema['nitobe_masthead_image'] = array(
+    'description' => t('Relationship of path/images for nitobe masthead'),
+    'fields' => array(
+      'id' => array(
+        'description' => t('Entry id'),
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'path' => array(
+        'description' => t('Site path that will use this image'),
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ),
+      'image' => array(
+        'description' => t('Image base filename'),
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'path' => array('path'),
+    ),
+  );
+
+  return $schema;
+}
