@@ -84,3 +84,10 @@ function nitobe_masthead_image_menu() {
 function nitobe_masthead_image_item_load($id) {
   return db_fetch_object(db_query("SELECT * FROM {nitobe_masthead_image} WHERE id = %d", $id));
 }
+
+/**
+ * Implementation of hook_perm().
+ */
+function nitobe_masthead_image_perm() {
+  return array('administer nitobe masthead');
+}
