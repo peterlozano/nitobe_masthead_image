@@ -11,6 +11,8 @@
  * Implementation of hook_init().
  */
 function nitobe_masthead_image_init() {
+  global $conf;
+
   if (drupal_is_front_page()) {
     $path = '<front>';
   }
@@ -21,24 +23,10 @@ function nitobe_masthead_image_init() {
 
   if ($filename) {
     $header_img = drupal_get_path('theme', 'nitobe') .'/headers/'. $filename;
-    // Add css style
-    drupal_set_html_head(_nitobe_masthead_image_fixed_header_css($header_img) . "\n");
 
-    // Fill masthead region with something to avoid the theme override the style
-    drupal_set_content('masthead', "\n");
+    // Override theme settings just for this request
+    $conf['theme_nitobe_settings']['nitobe_header_image'] = $header_img;
   }
-}
-
-/**
- * Returns the css style for the masthead region.
- */
-function _nitobe_masthead_image_fixed_header_css($filename) {
-  global $base_url;
-
-  $url    = $base_url . '/' . $filename;
-  $output = '<style type="text/css">#masthead{background-image:url(%s);}</style>';
-
-  return sprintf($output, $url);
 }
 
 /**
