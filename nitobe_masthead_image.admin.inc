@@ -1,5 +1,5 @@
 <?php
-// $Id: nitobe_masthead_image.admin.inc,v 1.1 2010/04/03 09:51:17 pl2 Exp $
+// $Id: nitobe_masthead_image.admin.inc,v 1.1.2.1 2010/04/04 21:44:42 pl2 Exp $
 
 /**
  * @file
@@ -39,7 +39,7 @@ function nitobe_masthead_image_admin_build_nitobemasthead_add($form_state, $item
   $form['path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path'),
-    '#default_value' => $item ? $item->path : '',
+    '#default_value' => $item ? check_plain($item->path) : '',
     '#description' => t('Use &lt;front&gt; for the front page.'),
   );
 
