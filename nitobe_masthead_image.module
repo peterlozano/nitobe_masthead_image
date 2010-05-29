@@ -22,7 +22,7 @@ function nitobe_masthead_image_init() {
   $filename = db_result(db_query("SELECT image FROM {nitobe_masthead_image} WHERE path = '%s'", $path));
 
   if ($filename) {
-    $header_img = drupal_get_path('theme', 'nitobe') .'/headers/'. $filename;
+    $header_img = path_to_theme() .'/headers/'. $filename;
 
     // Override theme settings just for this request
     $conf['theme_nitobe_settings']['nitobe_header_image'] = $header_img;
